@@ -1,0 +1,252 @@
+basePath: /api
+definitions:
+  Response:
+    properties:
+      code:
+        type: integer
+      error:
+        $ref: '#/definitions/echo.HTTPError'
+      success:
+        type: boolean
+    type: object
+  UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      timezone:
+        type: string
+    type: object
+  User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      timezone:
+        description: timezone for future use
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    required:
+    - username
+    type: object
+  echo.HTTPError:
+    properties:
+      message: {}
+    type: object
+info:
+  contact: {}
+  description: Calendly clone
+  title: Calendly API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: healthcheck
+      tags:
+      - health
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: handles the retrieval of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get all users
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: handles the creation of a new user
+      parameters:
+      - description: User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Create a user
+      tags:
+      - user
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: handles the deletion of a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Delete a user
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: handles the retrieval of a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get a user by ID
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: handles the update of a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: UpdateUserRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Update a user
+      tags:
+      - user
+swagger: "2.0"
