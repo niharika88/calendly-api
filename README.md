@@ -32,7 +32,8 @@ Building a REST API for calendly. Features supported:
 
 ## Screenshots: API docs and DB
 <img width="1512" alt="calendly-api-docs" src="https://github.com/user-attachments/assets/5e2f1398-08f4-40bd-91f0-6347f32bf579" />
-<img width="1090" alt="calendly-api-db" src="https://github.com/user-attachments/assets/e70da0c9-2da5-424e-acc8-199ce426d64a" />
+
+<img width="1202" alt="calendly-api-db" src="https://github.com/user-attachments/assets/6c0df257-eb78-418b-bb57-fb62cc171231" />
 
 
 ## Running the app
