@@ -18,6 +18,7 @@ Building a REST API for calendly. Features supported:
    - override availability on **particular dates**
      - User can *override* their availability on particular dates using this
      - Complete schedule for this date is overridden
+   - I did it this way to avoid creating a new row for every date's availability. This ensures that most users will just have 7 rows for day availability and only separate rows for specific DATES overridden.
  - User can *see* their availability between given dates (can extend it in the future to fetch availability for 1 week, 1 month and so on)
  - Given two users, can get their *schedule overlap*
  - **Note:** All input and output timestamps are assumed to be in UTC
@@ -29,8 +30,10 @@ Building a REST API for calendly. Features supported:
  - Meetings are stored along with a join table for many-to-many relationship with the users - to enable support for group meetings in the future
  - Obviously, existing user meetings will also be taken into consideration while getting user availability or schedule overlap
 
-## API docs
+## Screenshots: API docs and DB
 <img width="1512" alt="calendly-api-docs" src="https://github.com/user-attachments/assets/5e2f1398-08f4-40bd-91f0-6347f32bf579" />
+<img width="1090" alt="calendly-api-db" src="https://github.com/user-attachments/assets/e70da0c9-2da5-424e-acc8-199ce426d64a" />
+
 
 ## Running the app
 
