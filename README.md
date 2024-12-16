@@ -29,6 +29,9 @@ Building a REST API for calendly. Features supported:
  - Meetings are stored along with a join table for many-to-many relationship with the users - to enable support for group meetings in the future
  - Obviously, existing user meetings will also be taken into consideration while getting user availability or schedule overlap
 
+## API docs
+<img width="1512" alt="calendly-api-docs" src="https://github.com/user-attachments/assets/5e2f1398-08f4-40bd-91f0-6347f32bf579" />
+
 ## Running the app
 
  - App is containerized, so can run locally as well
