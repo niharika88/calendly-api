@@ -10,6 +10,8 @@ const (
 	ErrValidationStructure string = "cannot validate structure"
 	ErrParsingUUID         string = "please provide a valid UUID"
 	ErrNotFound            string = "record not found"
+	ErrUserNotFound        string = "user not found"
+	ErrInvalidUsername     string = "invalid username"
 	InternalServerErr      string = "Somewhere something went wrong but don't worry, we are on it."
 )
 

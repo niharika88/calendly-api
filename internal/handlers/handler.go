@@ -20,17 +20,29 @@ type Handler interface {
 	UpdateUser(c echo.Context) error
 	DeleteUser(c echo.Context) error
 	GetUsers(c echo.Context) error
+
+	CreateDayAvailability(c echo.Context) error
+	CreateDateAvailability(c echo.Context) error
+	DeleteDayAvailabilities(c echo.Context) error
+	DeleteDateAvailability(c echo.Context) error
+	GetUserAvailability(c echo.Context) error
+	GetScheduleOverlap(c echo.Context) error
 }
 
 type handler struct {
-	userService services.UserService
+	userService         services.UserService
+	availabilityService services.AvailabilityService
 }
 
 var _ Handler = (*handler)(nil)
 
-func NewHandler(userService services.UserService) Handler {
+func NewHandler(
+	userService services.UserService,
+	availabilityService services.AvailabilityService,
+) Handler {
 	return &handler{
-		userService: userService,
+		userService:         userService,
+		availabilityService: availabilityService,
 	}
 }
 

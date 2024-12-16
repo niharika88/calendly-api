@@ -1,5 +1,77 @@
 basePath: /api
 definitions:
+  CreateDateAvailabilityRequest:
+    properties:
+      date:
+        example: "2024-12-15T00:00:00Z"
+        type: string
+      slots:
+        items:
+          $ref: '#/definitions/Slot'
+        type: array
+      username:
+        type: string
+    required:
+    - date
+    - slots
+    - username
+    type: object
+  CreateDayAvailabilityRequest:
+    properties:
+      availability:
+        items:
+          $ref: '#/definitions/UserDayAvailability'
+        type: array
+      username:
+        type: string
+    required:
+    - availability
+    - username
+    type: object
+  DateAvailability:
+    properties:
+      created_at:
+        type: string
+      date:
+        type: string
+      id:
+        type: string
+      slots:
+        items:
+          $ref: '#/definitions/Slot'
+        type: array
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  DayAvailability:
+    properties:
+      created_at:
+        type: string
+      day:
+        $ref: '#/definitions/github_com_niharika88_calendly-api_internal_db_models.Day'
+      id:
+        type: string
+      slots:
+        items:
+          $ref: '#/definitions/Slot'
+        type: array
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  DeleteUserAvailabilityRequest:
+    properties:
+      date:
+        example: "2024-12-15T00:00:00Z"
+        type: string
+      username:
+        type: string
+    required:
+    - username
+    type: object
   Response:
     properties:
       code:
@@ -8,6 +80,15 @@ definitions:
         $ref: '#/definitions/echo.HTTPError'
       success:
         type: boolean
+    type: object
+  Slot:
+    properties:
+      end:
+        description: End time in minutes since midnight
+        type: integer
+      start:
+        description: Start time in minutes since midnight
+        type: integer
     type: object
   UpdateUserRequest:
     properties:
@@ -42,16 +123,320 @@ definitions:
     required:
     - username
     type: object
+  UserDateAvailability:
+    properties:
+      availability:
+        additionalProperties:
+          items:
+            $ref: '#/definitions/Slot'
+          type: array
+        type: object
+    required:
+    - availability
+    type: object
+  UserDayAvailability:
+    properties:
+      day:
+        $ref: '#/definitions/github_com_niharika88_calendly-api_internal_db_models.Day'
+      slots:
+        items:
+          $ref: '#/definitions/Slot'
+        type: array
+    required:
+    - day
+    - slots
+    type: object
   echo.HTTPError:
     properties:
       message: {}
     type: object
+  github_com_niharika88_calendly-api_internal_db_models.Day:
+    enum:
+    - monday
+    - tuesday
+    - wednesday
+    - thursday
+    - friday
+    - saturday
+    - sunday
+    type: string
+    x-enum-varnames:
+    - DayMonday
+    - DayTuesday
+    - DayWednesday
+    - DayThursday
+    - DayFriday
+    - DaySaturday
+    - DaySunday
 info:
   contact: {}
   description: Calendly clone
   title: Calendly API
   version: "1.0"
 paths:
+  /availability:
+    get:
+      consumes:
+      - application/json
+      description: handles the retrieval of overall user availability across a range
+        of dates, takes both day/date into account
+      parameters:
+      - description: Username
+        in: query
+        name: username
+        required: true
+        type: string
+      - default: "2024-12-15"
+        description: Start Date
+        in: query
+        name: startDate
+        required: true
+        type: string
+      - default: "2024-12-15"
+        description: End Date
+        in: query
+        name: endDate
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/UserDateAvailability'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get availability
+      tags:
+      - availability
+  /availability/date:
+    delete:
+      consumes:
+      - application/json
+      description: handles the deletion of date-based availability
+      parameters:
+      - description: DeleteUserAvailabilityRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/DeleteUserAvailabilityRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Delete date availability
+      tags:
+      - availability
+    post:
+      consumes:
+      - application/json
+      description: |-
+        handles the creation of date-specific availability
+        every request overrides the existing availability for that date
+        date availability ALWAYS overrides the day availability
+      parameters:
+      - description: DateAvailabilityRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/CreateDateAvailabilityRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/DateAvailability'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Create date availability
+      tags:
+      - availability
+  /availability/day:
+    delete:
+      consumes:
+      - application/json
+      description: handles the deletion of day-based availability (`date` param is
+        ignored)
+      parameters:
+      - description: DeleteUserAvailabilityRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/DeleteUserAvailabilityRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Delete day availability
+      tags:
+      - availability
+    post:
+      consumes:
+      - application/json
+      description: |-
+        handles the creation of day-based availability
+        every request overrides the existing availability for all days
+        if day is not provided, no availability is created for that day
+      parameters:
+      - description: DayAvailabilityRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/CreateDayAvailabilityRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/DayAvailability'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Create day availability
+      tags:
+      - availability
+  /availability/overlap:
+    get:
+      consumes:
+      - application/json
+      description: handles the retrieval of schedule overlap between two users
+      parameters:
+      - description: First Username
+        in: query
+        name: firstUsername
+        required: true
+        type: string
+      - description: Second Username
+        in: query
+        name: secondUsername
+        required: true
+        type: string
+      - default: "2024-12-15"
+        description: Start Date
+        in: query
+        name: startDate
+        required: true
+        type: string
+      - default: "2024-12-15"
+        description: End Date
+        in: query
+        name: endDate
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/UserDateAvailability'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get schedule overlap
+      tags:
+      - availability
   /health:
     get:
       consumes:

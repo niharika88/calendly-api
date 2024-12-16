@@ -14,6 +14,7 @@ import (
 type UserService interface {
 	Create(ctx context.Context, model *models.User) (*models.User, error)
 	GetByID(ctx context.Context, id uuid.UUID, association bool) (*models.User, error)
+	GetByUsername(ctx context.Context, username string) (*models.User, error)
 	Update(ctx context.Context, id uuid.UUID, req api.UpdateUserRequest) (*models.User, error)
 	Delete(ctx context.Context, id uuid.UUID) error
 	GetAll(ctx context.Context, association bool) ([]*models.User, error)
@@ -38,6 +39,17 @@ func (s *userService) Create(ctx context.Context, usrData *models.User) (*models
 
 func (s *userService) GetByID(ctx context.Context, id uuid.UUID, association bool) (*models.User, error) {
 	return s.userRepo.FindByID(ctx, id, association)
+}
+
+func (s *userService) GetByUsername(ctx context.Context, username string) (*models.User, error) {
+	users, err := s.userRepo.FindByColumn(ctx, "username", username)
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 || users[0] == nil || users[0].ID == uuid.Nil {
+		return nil, api.BadRequestErr(api.ErrUserNotFound, nil)
+	}
+	return users[0], nil
 }
 
 func (s *userService) Update(ctx context.Context, id uuid.UUID, req api.UpdateUserRequest) (*models.User, error) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -20,10 +21,10 @@ import (
 	"github.com/uptrace/bun/driver/pgdriver"
 )
 
-//	@title			Calendly API
-//	@version		1.0
-//	@description	Calendly clone
-//	@BasePath		/api
+// @title			Calendly API
+// @version		1.0
+// @description	Calendly clone
+// @BasePath		/api
 func main() {
 	cfg := configs.Get()
 	ctx := context.Background()
@@ -38,12 +39,14 @@ func main() {
 
 	// initialize repositories
 	userRepo := repo.NewUserRepo(db)
+	availabilityRepo := repo.NewAvailabilityRepo(db)
 
 	// initialize services
 	userService := services.NewUserService(userRepo)
+	availabilityService := services.NewAvailabilityService(availabilityRepo)
 
 	// initialize handlers
-	h := handlers.NewHandler(userService)
+	h := handlers.NewHandler(userService, availabilityService)
 
 	// initialize routes
 	api := router.Group("/api")
@@ -55,6 +58,13 @@ func main() {
 	api.PUT("/users/:id", h.UpdateUser)
 	api.DELETE("/users/:id", h.DeleteUser)
 	api.GET("/users", h.GetUsers)
+
+	api.POST("/availability/day", h.CreateDayAvailability)
+	api.POST("/availability/date", h.CreateDateAvailability)
+	api.DELETE("/availability/day", h.DeleteDayAvailabilities)
+	api.DELETE("/availability/date", h.DeleteDateAvailability)
+	api.GET("/availability", h.GetUserAvailability)
+	api.GET("/availability/overlap", h.GetScheduleOverlap)
 
 	slog.Info("$$$ Welcome to your pocket calendar app $$$")
 	// print routes
@@ -86,6 +96,10 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 		} else {
 			code = v.Code
 			message = v.Message.(string)
+
+			if v.Internal != nil { // for debugging, ideally we would not want to reveal internal errors to the user
+				message = fmt.Sprintf("%s ::: %s", message, v.Internal.Error())
+			}
 		}
 		internal = v.Internal
 	default:
@@ -96,6 +110,9 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	if message == "" {
 		message = api.InternalServerErr
 	}
+
+	// print internal error
+	slog.Error("Error", "internal", internal)
 
 	// Return the error response in JSON format
 	errorResponse := api.Response{

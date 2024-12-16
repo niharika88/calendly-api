@@ -16,7 +16,7 @@ type UserRepo interface {
 	GetAll(ctx context.Context, association bool) ([]*models.User, error)
 	Delete(ctx context.Context, id uuid.UUID) error
 	FindByID(ctx context.Context, id uuid.UUID, association bool) (*models.User, error)
-	FindByColumn(ctx context.Context, filterColumnName, filterColumnValue string, association bool) ([]*models.User, error)
+	FindByColumn(ctx context.Context, filterColumnName, filterColumnValue string) ([]*models.User, error)
 }
 
 type user struct {
@@ -55,9 +55,6 @@ func (u *user) FindByID(ctx context.Context, id uuid.UUID, association bool) (*m
 	return u.baseRepo.FindByID(ctx, id, "")
 }
 
-func (u *user) FindByColumn(ctx context.Context, filterColumnName, filterColumnValue string, association bool) ([]*models.User, error) {
-	if association {
-		return u.baseRepo.FindByColumn(ctx, filterColumnName, filterColumnValue, "")
-	}
+func (u *user) FindByColumn(ctx context.Context, filterColumnName, filterColumnValue string) ([]*models.User, error) {
 	return u.baseRepo.FindByColumn(ctx, filterColumnName, filterColumnValue, "")
 }

@@ -8,6 +8,388 @@
     },
     "basePath": "/api",
     "paths": {
+        "/availability": {
+            "get": {
+                "description": "handles the retrieval of overall user availability across a range of dates, takes both day/date into account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "availability"
+                ],
+                "summary": "Get availability",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "2024-12-15",
+                        "description": "Start Date",
+                        "name": "startDate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "2024-12-15",
+                        "description": "End Date",
+                        "name": "endDate",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserDateAvailability"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/availability/date": {
+            "post": {
+                "description": "handles the creation of date-specific availability\nevery request overrides the existing availability for that date\ndate availability ALWAYS overrides the day availability",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "availability"
+                ],
+                "summary": "Create date availability",
+                "parameters": [
+                    {
+                        "description": "DateAvailabilityRequest",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateDateAvailabilityRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/DateAvailability"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "handles the deletion of date-based availability",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "availability"
+                ],
+                "summary": "Delete date availability",
+                "parameters": [
+                    {
+                        "description": "DeleteUserAvailabilityRequest",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeleteUserAvailabilityRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/availability/day": {
+            "post": {
+                "description": "handles the creation of day-based availability\nevery request overrides the existing availability for all days\nif day is not provided, no availability is created for that day",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "availability"
+                ],
+                "summary": "Create day availability",
+                "parameters": [
+                    {
+                        "description": "DayAvailabilityRequest",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateDayAvailabilityRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DayAvailability"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "handles the deletion of day-based availability (`date` param is ignored)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "availability"
+                ],
+                "summary": "Delete day availability",
+                "parameters": [
+                    {
+                        "description": "DeleteUserAvailabilityRequest",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeleteUserAvailabilityRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/availability/overlap": {
+            "get": {
+                "description": "handles the retrieval of schedule overlap between two users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "availability"
+                ],
+                "summary": "Get schedule overlap",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "First Username",
+                        "name": "firstUsername",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Second Username",
+                        "name": "secondUsername",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "2024-12-15",
+                        "description": "Start Date",
+                        "name": "startDate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "2024-12-15",
+                        "description": "End Date",
+                        "name": "endDate",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserDateAvailability"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "consumes": [
@@ -308,6 +690,114 @@
         }
     },
     "definitions": {
+        "CreateDateAvailabilityRequest": {
+            "type": "object",
+            "required": [
+                "date",
+                "slots",
+                "username"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "example": "2024-12-15T00:00:00Z"
+                },
+                "slots": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Slot"
+                    }
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "CreateDayAvailabilityRequest": {
+            "type": "object",
+            "required": [
+                "availability",
+                "username"
+            ],
+            "properties": {
+                "availability": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserDayAvailability"
+                    }
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "DateAvailability": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "slots": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Slot"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "DayAvailability": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "day": {
+                    "$ref": "#/definitions/github_com_niharika88_calendly-api_internal_db_models.Day"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "slots": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Slot"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "DeleteUserAvailabilityRequest": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "example": "2024-12-15T00:00:00Z"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "Response": {
             "type": "object",
             "properties": {
@@ -319,6 +809,19 @@
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "Slot": {
+            "type": "object",
+            "properties": {
+                "end": {
+                    "description": "End time in minutes since midnight",
+                    "type": "integer"
+                },
+                "start": {
+                    "description": "Start time in minutes since midnight",
+                    "type": "integer"
                 }
             }
         },
@@ -372,11 +875,67 @@
                 }
             }
         },
+        "UserDateAvailability": {
+            "type": "object",
+            "required": [
+                "availability"
+            ],
+            "properties": {
+                "availability": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Slot"
+                        }
+                    }
+                }
+            }
+        },
+        "UserDayAvailability": {
+            "type": "object",
+            "required": [
+                "day",
+                "slots"
+            ],
+            "properties": {
+                "day": {
+                    "$ref": "#/definitions/github_com_niharika88_calendly-api_internal_db_models.Day"
+                },
+                "slots": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Slot"
+                    }
+                }
+            }
+        },
         "echo.HTTPError": {
             "type": "object",
             "properties": {
                 "message": {}
             }
+        },
+        "github_com_niharika88_calendly-api_internal_db_models.Day": {
+            "type": "string",
+            "enum": [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday"
+            ],
+            "x-enum-varnames": [
+                "DayMonday",
+                "DayTuesday",
+                "DayWednesday",
+                "DayThursday",
+                "DayFriday",
+                "DaySaturday",
+                "DaySunday"
+            ]
         }
     }
 }
