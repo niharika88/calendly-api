@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:alpine
+    container_name: "postgres_calapi"
+    environment:
+      POSTGRES_USER: "calapi"
+      POSTGRES_PASSWORD: "calapi"
+      POSTGRES_DB: "calapi_db"
+    ports:
+      - "5432:5432"
+    volumes:
+      - calapi_data:/var/lib/postgresql/data
+    networks:
+      - calapi_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U calapi -d calapi_db -h localhost"]
+      interval: 1s
+      retries: 3
+      start_period: 0s
+      timeout: 1s
+  calendly-api:
+    build: .
+    container_name: "calendly-api"
+    ports:
+      - "2090:2090"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - calapi_network
+
+networks:
+  calapi_network:
+
+volumes:
+  calapi_data:

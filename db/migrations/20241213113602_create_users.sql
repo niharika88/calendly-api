@@ -1,0 +1,14 @@
+-- migrate:up
+CREATE TABLE users (
+	id UUID PRIMARY KEY,
+	first_name VARCHAR(255),
+	last_name VARCHAR(255),
+	username VARCHAR(255) UNIQUE NOT NULL,
+	email VARCHAR(255) UNIQUE,
+	timezone VARCHAR(255),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrate:down
+DROP TABLE IF EXISTS users;
